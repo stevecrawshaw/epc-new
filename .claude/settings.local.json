@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/steve.crawshaw/projects/epc-new -type f -name *.csv)",
+      "Bash(grep \"\\\\.csv$\")",
+      "Bash(duckdb:*)",
+      "Bash(find /c/Users/steve.crawshaw/projects/epc-new -type f \\\\\\(-name *.sql -o -name *.md -o -name pyproject.toml \\\\\\))",
+      "Bash(find /c/Users/steve.crawshaw/projects/epc-new -maxdepth 2 -type f \\\\\\(-name *.md -o -name CLAUDE.md -o -name TODO.md \\\\\\))",
+      "Bash(find /c/Users/steve.crawshaw/projects/epc-new/data -type f -name *)",
+      "Bash(echo \".read sql/schemas/domestic_recommendations.sql:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "duckdb-skills@duckdb-skills": true
+  }
+}

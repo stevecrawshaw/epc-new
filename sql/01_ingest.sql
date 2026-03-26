@@ -1,0 +1,173 @@
+-- EPC data ingestion script
+-- Run from project root: duckdb data/epc-new.duckdb < sql/01_ingest.sql
+-- Loads all yearly CSV files into four tables with explicit type mappings
+
+-- Create tables from schema definitions
+.read sql/schemas/domestic_certificates.sql
+.read sql/schemas/domestic_recommendations.sql
+.read sql/schemas/non_domestic_certificates.sql
+.read sql/schemas/non_domestic_recommendations.sql
+
+-- Domestic certificates (~25M+ rows, ~20GB CSV)
+INSERT INTO domestic_certificates
+SELECT * FROM read_csv('data/domestic/certificates-*.csv', header=true, escape='\', columns={
+    'certificate_number': 'VARCHAR',
+    'address1': 'VARCHAR',
+    'address2': 'VARCHAR',
+    'address3': 'VARCHAR',
+    'address': 'VARCHAR',
+    'postcode': 'VARCHAR',
+    'inspection_date': 'DATE',
+    'uprn': 'VARCHAR',
+    'environment_impact_potential': 'INTEGER',
+    'energy_consumption_current': 'DOUBLE',
+    'energy_consumption_potential': 'DOUBLE',
+    'environment_impact_current': 'INTEGER',
+    'co2_emissions_current': 'DOUBLE',
+    'co2_emiss_curr_per_floor_area': 'DOUBLE',
+    'co2_emissions_potential': 'DOUBLE',
+    'total_floor_area': 'DOUBLE',
+    'lodgement_date': 'VARCHAR',
+    'report_type': 'VARCHAR',
+    'posttown': 'VARCHAR',
+    'lodgement_datetime': 'TIMESTAMP',
+    'current_energy_efficiency': 'INTEGER',
+    'current_energy_rating': 'VARCHAR',
+    'potential_energy_efficiency': 'INTEGER',
+    'potential_energy_rating': 'VARCHAR',
+    'extension_count': 'INTEGER',
+    'number_open_fireplaces': 'INTEGER',
+    'number_heated_rooms': 'INTEGER',
+    'number_habitable_rooms': 'INTEGER',
+    'low_energy_lighting': 'INTEGER',
+    'low_energy_fixed_lighting_outlets_count': 'INTEGER',
+    'solar_water_heating_flag': 'VARCHAR',
+    'mechanical_ventilation': 'VARCHAR',
+    'tenure': 'VARCHAR',
+    'property_type': 'VARCHAR',
+    'transaction_type': 'VARCHAR',
+    'construction_age_band': 'VARCHAR',
+    'built_form': 'VARCHAR',
+    'energy_tariff': 'VARCHAR',
+    'glazed_type': 'VARCHAR',
+    'glazed_area': 'VARCHAR',
+    'heat_loss_corridor': 'VARCHAR',
+    'main_fuel': 'VARCHAR',
+    'unheated_corridor_length': 'VARCHAR',
+    'floor_level': 'VARCHAR',
+    'flat_top_storey': 'VARCHAR',
+    'flat_storey_count': 'INTEGER',
+    'mains_gas_flag': 'VARCHAR',
+    'photo_supply': 'DOUBLE',
+    'wind_turbine_count': 'INTEGER',
+    'lighting_cost_current': 'INTEGER',
+    'lighting_cost_potential': 'INTEGER',
+    'heating_cost_current': 'INTEGER',
+    'heating_cost_potential': 'INTEGER',
+    'hot_water_cost_current': 'INTEGER',
+    'hot_water_cost_potential': 'INTEGER',
+    'multi_glaze_proportion': 'INTEGER',
+    'hotwater_description': 'VARCHAR',
+    'hot_water_energy_eff': 'VARCHAR',
+    'hot_water_env_eff': 'VARCHAR',
+    'floor_description': 'VARCHAR',
+    'floor_energy_eff': 'VARCHAR',
+    'floor_env_eff': 'VARCHAR',
+    'roof_description': 'VARCHAR',
+    'roof_energy_eff': 'VARCHAR',
+    'roof_env_eff': 'VARCHAR',
+    'walls_description': 'VARCHAR',
+    'walls_energy_eff': 'VARCHAR',
+    'walls_env_eff': 'VARCHAR',
+    'windows_description': 'VARCHAR',
+    'windows_energy_eff': 'VARCHAR',
+    'windows_env_eff': 'VARCHAR',
+    'secondheat_description': 'VARCHAR',
+    'sheating_energy_eff': 'VARCHAR',
+    'sheating_env_eff': 'VARCHAR',
+    'mainheat_description': 'VARCHAR',
+    'mainheat_energy_eff': 'VARCHAR',
+    'mainheat_env_eff': 'VARCHAR',
+    'mainheatcont_description': 'VARCHAR',
+    'mainheatc_energy_eff': 'VARCHAR',
+    'mainheatc_env_eff': 'VARCHAR',
+    'lighting_description': 'VARCHAR',
+    'lighting_energy_eff': 'VARCHAR',
+    'lighting_env_eff': 'VARCHAR',
+    'fixed_lighting_outlets_count': 'INTEGER',
+    'floor_height': 'DOUBLE',
+    'main_heating_controls': 'VARCHAR',
+    'local_authority': 'VARCHAR',
+    'local_authority_label': 'VARCHAR',
+    'constituency_label': 'VARCHAR',
+    'constituency': 'VARCHAR',
+    'country': 'VARCHAR',
+    'region': 'VARCHAR',
+    'uprn_source': 'VARCHAR'
+});
+
+-- Domestic recommendations (~70M+ rows, ~30GB CSV)
+INSERT INTO domestic_recommendations
+SELECT * FROM read_csv('data/domestic/recommendations-*.csv', header=true, columns={
+    'certificate_number': 'VARCHAR',
+    'improvement_item': 'INTEGER',
+    'improvement_id': 'VARCHAR',
+    'indicative_cost': 'VARCHAR',
+    'improvement_summary_text': 'VARCHAR',
+    'improvement_descr_text': 'VARCHAR'
+});
+
+-- Non-domestic certificates (~1.5M rows, ~600MB CSV)
+INSERT INTO non_domestic_certificates
+SELECT * FROM read_csv('data/non-domestic/certificates-*.csv', header=true, escape='\', columns={
+    'certificate_number': 'VARCHAR',
+    'address1': 'VARCHAR',
+    'address2': 'VARCHAR',
+    'address3': 'VARCHAR',
+    'postcode': 'VARCHAR',
+    'uprn': 'VARCHAR',
+    'asset_rating': 'INTEGER',
+    'asset_rating_band': 'VARCHAR',
+    'property_type': 'VARCHAR',
+    'inspection_date': 'DATE',
+    'local_authority': 'VARCHAR',
+    'constituency': 'VARCHAR',
+    'transaction_type': 'VARCHAR',
+    'lodgement_date': 'DATE',
+    'new_build_benchmark': 'DOUBLE',
+    'existing_stock_benchmark': 'DOUBLE',
+    'building_level': 'VARCHAR',
+    'main_heating_fuel': 'VARCHAR',
+    'other_fuel_desc': 'VARCHAR',
+    'special_energy_uses': 'VARCHAR',
+    'renewable_sources': 'VARCHAR',
+    'floor_area': 'DOUBLE',
+    'standard_emissions': 'DOUBLE',
+    'target_emissions': 'DOUBLE',
+    'typical_emissions': 'DOUBLE',
+    'building_emissions': 'DOUBLE',
+    'aircon_present': 'VARCHAR',
+    'aircon_kw_rating': 'DOUBLE',
+    'estimated_aircon_kw_rating': 'DOUBLE',
+    'ac_inspection_commissioned': 'VARCHAR',
+    'building_environment': 'VARCHAR',
+    'address': 'VARCHAR',
+    'local_authority_label': 'VARCHAR',
+    'constituency_label': 'VARCHAR',
+    'posttown': 'VARCHAR',
+    'lodgement_datetime': 'TIMESTAMP',
+    'primary_energy_value': 'DOUBLE',
+    'report_type': 'VARCHAR',
+    'uprn_source': 'VARCHAR'
+});
+
+-- Non-domestic recommendations (~10M rows, ~2GB CSV)
+INSERT INTO non_domestic_recommendations
+SELECT * FROM read_csv('data/non-domestic/recommendations-*.csv', header=true, columns={
+    'certificate_number': 'VARCHAR',
+    'payback_type': 'VARCHAR',
+    'recommendation_item': 'INTEGER',
+    'related_certificate_number': 'VARCHAR',
+    'recommendation_code': 'VARCHAR',
+    'recommendation': 'VARCHAR'
+});
