@@ -5,9 +5,9 @@
 -- Table comments
 -- =============================================================================
 
-COMMENT ON TABLE domestic_certificates IS 'Energy Performance Certificates for domestic properties in England and Wales (2012-2026). Source: DLUHC EPC bulk download.';
+COMMENT ON TABLE domestic_certificates IS 'Energy Performance Certificates for domestic properties in England and Wales (2012-2026). Multiple certificates can exist per uprn. Source: DLUHC EPC bulk download.';
 COMMENT ON TABLE domestic_recommendations IS 'Improvement recommendations linked to domestic EPCs (2012-2026). Source: DLUHC EPC bulk download.';
-COMMENT ON TABLE non_domestic_certificates IS 'Energy Performance Certificates for non-domestic properties in England and Wales (2012-2026). Source: DLUHC EPC bulk download.';
+COMMENT ON TABLE non_domestic_certificates IS 'Energy Performance Certificates for non-domestic properties in England and Wales (2012-2026). Multiple certificates can exist per uprn. Source: DLUHC EPC bulk download.';
 COMMENT ON TABLE non_domestic_recommendations IS 'Improvement recommendations linked to non-domestic EPCs (2012-2026). Source: DLUHC EPC bulk download.';
 
 -- =============================================================================
