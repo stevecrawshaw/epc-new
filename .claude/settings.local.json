@@ -8,7 +8,13 @@
       "Bash(find /c/Users/steve.crawshaw/projects/epc-new -maxdepth 2 -type f \\\\\\(-name *.md -o -name CLAUDE.md -o -name TODO.md \\\\\\))",
       "Bash(find /c/Users/steve.crawshaw/projects/epc-new/data -type f -name *)",
       "Bash(echo \".read sql/schemas/domestic_recommendations.sql:*)",
-      "mcp__mcp-server-motherduck__execute_query"
+      "mcp__mcp-server-motherduck__execute_query",
+      "mcp__mcp-server-motherduck__list_tables",
+      "mcp__claude_ai_MotherDuck__list_tables",
+      "Bash(npx -y -q mviz reports/epc_ratings_dashboard.md -o reports/epc_ratings_dashboard.html)",
+      "Bash(start:*)",
+      "Bash(npx -y -q mviz epc_ratings_dashboard.md -o epc_ratings_dashboard.html)",
+      "Bash(duckdb data/epc_new.duckdb -readonly -c \":*)"
     ]
   },
   "enabledPlugins": {
