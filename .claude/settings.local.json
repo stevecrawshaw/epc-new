@@ -14,7 +14,8 @@
       "Bash(npx -y -q mviz reports/epc_ratings_dashboard.md -o reports/epc_ratings_dashboard.html)",
       "Bash(start:*)",
       "Bash(npx -y -q mviz epc_ratings_dashboard.md -o epc_ratings_dashboard.html)",
-      "Bash(duckdb data/epc_new.duckdb -readonly -c \":*)"
+      "Bash(duckdb data/epc_new.duckdb -readonly -c \":*)",
+      "Bash(.venv/Scripts/python.exe -c \"import zmq; print\\(''pyzmq'', zmq.__version__, ''OK''\\)\")"
     ]
   },
   "enabledPlugins": {
