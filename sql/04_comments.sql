@@ -9,6 +9,7 @@ COMMENT ON TABLE domestic_certificates IS 'Energy Performance Certificates for d
 COMMENT ON TABLE domestic_recommendations IS 'Improvement recommendations linked to domestic EPCs (2012-2026). Source: DLUHC EPC bulk download.';
 COMMENT ON TABLE non_domestic_certificates IS 'Energy Performance Certificates for non-domestic properties in England and Wales (2012-2026). Multiple certificates can exist per uprn. Source: DLUHC EPC bulk download.';
 COMMENT ON TABLE non_domestic_recommendations IS 'Improvement recommendations linked to non-domestic EPCs (2012-2026). Source: DLUHC EPC bulk download.';
+COMMENT ON TABLE ca_la_tbl IS 'Lookup table linking local authorities to combined authorities. Uses official ONS codes for local authority districts (LAD25CD) and combined authority districts (CAUTH25CD). Data from ONS Open Geography Portal as of May 2025.';
 
 -- =============================================================================
 -- Domestic certificates — from domestic_data_dictionary.csv
@@ -173,6 +174,15 @@ COMMENT ON COLUMN non_domestic_recommendations.recommendation_item IS 'Sequence 
 COMMENT ON COLUMN non_domestic_recommendations.related_certificate_number IS 'The certificate number of a related EPC, typically the same as certificate_number.';
 COMMENT ON COLUMN non_domestic_recommendations.recommendation_code IS 'Shorthand code to represent the recommendation (e.g. EPC-E7).';
 COMMENT ON COLUMN non_domestic_recommendations.recommendation IS 'Description of the suggested improvement.';
+
+-- =============================================================================
+-- Combined authority lookup table
+-- =============================================================================
+
+COMMENT ON COLUMN ca_la_tbl.LAD25CD IS 'ONS code for the local authority district (LAD). Used to link to EPC data with the local_authority column';
+COMMENT ON COLUMN ca_la_tbl.LAD25NM IS 'name of the local authority district (LAD). EPC data column is local_authority_label.';
+COMMENT ON COLUMN ca_la_tbl.CAUTH25CD IS 'ONS code for the combined authority (CA)';
+COMMENT ON COLUMN ca_la_tbl.CAUTH25NM IS 'name of the combined authority (CA). For example, West of England';
 
 -- =============================================================================
 -- Domestic LEP deduplicated view — West of England LEP (Bristol, Bath & NES,

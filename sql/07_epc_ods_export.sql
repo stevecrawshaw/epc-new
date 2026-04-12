@@ -68,8 +68,16 @@ LEFT JOIN open_uprn_lep_tbl o ON e.uprn = o.uprn;
 -- SELECT COUNT() FROM epc_domestic_lep_ods_vw GROUP BY uprn HAVING COUNT() > 1;
 
 
-
-COPY epc_domestic_lep_ods_vw TO '~/projects/epc-new/data/exports/epc_domestic_lep_ods.csv' (FORMAT CSV, HEADER);
+-- EXPORT TO CSV - REPLACE PROPRIETARY SQUARED SYMBOL WITH '2' TO AVOID ISSUES IN ODS ENCODING
+COPY
+ (
+      SELECT * REPLACE (
+          regexp_replace(walls_description, '²', '2') AS walls_description,
+          regexp_replace(roof_description, '²', '2') AS roof_description
+      )
+      FROM epc_domestic_lep_ods_vw)
+ TO
+'~/projects/epc-new/data/exports/epc_domestic_lep_ods.csv' (FORMAT CSV, HEADER);
 
 -- NON DOMESTIC EPC DATA EXPORT TO ODS
 
@@ -83,7 +91,9 @@ LEFT JOIN open_uprn_lep_tbl o ON e.uprn = o.uprn;
 -- DESCRIBE epc_non_domestic_lep_ods_vw;
 -- FROM macros.glimpse('epc_non_domestic_lep_ods_vw');
 
-COPY epc_non_domestic_lep_ods_vw TO '~/projects/epc-new/data/exports/epc_non_domestic_lep_ods.csv' (FORMAT CSV, HEADER);
+COPY epc_non_domestic_lep_ods_vw
+TO '~/projects/epc-new/data/exports/epc_non_domestic_lep_ods.csv'
+(FORMAT CSV, HEADER);
 
 DETACH weca_postgres;
 DETACH macros;

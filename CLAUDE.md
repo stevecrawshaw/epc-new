@@ -32,6 +32,10 @@ duckdb data/epc-new.duckdb < sql/01_ingest.sql
 # Apply column/table comments
 duckdb data/epc-new.duckdb < sql/02_comments.sql
 
+# Apply incremental certificate updates from data/updates/{domestic,non-domestic}/
+# Inserts new certificate_numbers only (ANTI JOIN); deletes consumed CSVs on success.
+uv run python scripts/run_updates.py
+
 # Ad-hoc query
 duckdb data/epc-new.duckdb -c "SELECT COUNT(*) FROM domestic_certificates"
 
@@ -58,6 +62,7 @@ MotherDuck MCP server is configured in `.mcp.json`, pointing at `data/epc_new.du
 - Non-domestic certificates CSV also uses `escape='\'`
 - All column types are explicitly mapped in `sql/01_ingest.sql` (no auto-detect) to avoid type inference issues across ~50GB of CSV data
 - CSV files are yearly partitions (2012-2026), one per year per table
+- Incremental updates: drop CSVs (matching the schemas in `sql/01_ingest.sql`) into `data/updates/domestic/` or `data/updates/non-domestic/`, then run `scripts/run_updates.py`. The wrapper invokes the ANTI JOIN inserts in `sql/06_update_certificates.sql` for whichever side has files, skipping `certificate_number`s already present, and deletes the source CSVs on success
 
 ## Ruff Configuration
 

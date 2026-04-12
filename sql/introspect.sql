@@ -1,9 +1,20 @@
-duckdb data/epc_new.duckdb
+duckdb
+ATTACH  'data/epc_new.duckdb' AS epc_new;
+DETACH epc_new;
 
--- .tables
+.tables
 
--- INSTALL SPATIAL;
--- LOAD SPATIAL;
+INSTALL SPATIAL;
+LOAD SPATIAL;
+
+SELECT roof_description, walls_description
+FROM domestic_certificates
+WHERE roof_description IS NOT NULL
+LIMIT 10;
+
+
+SELECT max(lodgement_datetime) AS max_lodgement_datetime
+FROM domestic_certificates;
 
 -- .tables
 -- Attach PostGIS database using configured secret
@@ -15,15 +26,11 @@ duckdb data/epc_new.duckdb
 -- SELECT COUNT() FROM domestic_certificates;
 
 
--- QUERY BELOW AIMS TO FILTER JUST THE MOST RECENT CERTIFICATE PER UPRN, AND ONLY FOR THE FOUR LOCAL AUTHORITIES IN SCOPE FOR ODS EXPORT
--- HOW CAN IT BE OPTIMISED?
-SELECT *
-FROM domestic_certificates
-WHERE uprn IS NOT NULL AND local_authority IN ('E06000023', 'E06000024', 'E06000025', 'E06000022')
-QUALIFY ROW_NUMBER() OVER (
-    PARTITION BY uprn
-    ORDER BY
-        lodgement_datetime DESC NULLS LAST,
-        certificate_number DESC NULLS LAST
-) = 1;
+USE epc_new;
+ATTACH 'md:';
 
+DROP DATABASE epc CASCADE;
+-- md authentication is in the .env variable
+
+ATTACH 'md:';
+CREATE OR REPLACE DATABASE epc FROM epc_new;
