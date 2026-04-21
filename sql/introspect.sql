@@ -4,11 +4,14 @@ DETACH epc_new;
 
 .tables
 
+COPY epc_new.epc_domestic_lep_deduplicated_vw TO 'data/epc_domestic_lep_deduplicated_vw.csv' (FORMAT CSV, HEADER);
+COPY epc_new.ca_la_tbl TO 'data/ca_la_tbl.csv' (FORMAT CSV, HEADER);
+
 INSTALL SPATIAL;
 LOAD SPATIAL;
 
 SELECT roof_description, walls_description
-FROM domestic_certificates
+FROM epc_new.domestic_certificates
 WHERE roof_description IS NOT NULL
 LIMIT 10;
 
