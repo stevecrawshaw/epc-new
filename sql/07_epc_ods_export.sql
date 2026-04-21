@@ -56,7 +56,7 @@ e.photo_supply,
 e.total_floor_area,
 e.built_form,
 e.lodgement_datetime,
-macros.geopoint_from_blob(o.shape) AS geo_point_2d
+macros.geopoint_from_blob(o.shape::BLOB) AS geo_point_2d
 FROM epc_new.epc_domestic_lep_deduplicated_vw e
 LEFT JOIN open_uprn_lep_tbl o ON e.uprn = o.uprn;
 
@@ -84,7 +84,7 @@ COPY
 CREATE TEMPORARY VIEW epc_non_domestic_lep_ods_vw AS
 SELECT
     e.* EXCLUDE ("address", "address1", "address2", "address3", "postcode"),
-    macros.geopoint_from_blob(o.shape) AS geo_point_2d
+    macros.geopoint_from_blob(o.shape::BLOB) AS geo_point_2d
 FROM epc_new.epc_non_domestic_lep_deduplicated_vw e
 LEFT JOIN open_uprn_lep_tbl o ON e.uprn = o.uprn;
 
@@ -94,6 +94,9 @@ LEFT JOIN open_uprn_lep_tbl o ON e.uprn = o.uprn;
 COPY epc_non_domestic_lep_ods_vw
 TO '~/projects/epc-new/data/exports/epc_non_domestic_lep_ods.csv'
 (FORMAT CSV, HEADER);
+
+SELECT geo_point_2d FROM read_csv('data/exports/epc_non_domestic_lep_ods.csv')
+LIMIT 10;
 
 DETACH weca_postgres;
 DETACH macros;
