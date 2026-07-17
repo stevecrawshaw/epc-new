@@ -7,11 +7,17 @@
 -- ON CONFLICT DO NOTHING but works without a PRIMARY KEY on the target.
 -- The wrapper extracts each statement by its `-- @<key>` marker and runs
 -- it independently, so directories with no files are skipped.
+--
+-- Column order note: `types=` (name-keyed) pins each column's type while
+-- letting the sniffer read the CSV's own column order, and `INSERT ... BY
+-- NAME` reorders to the target table. Update CSVs arrive in a different
+-- column order than the bulk-ingest files, so a positional `columns=` map
+-- would mis-assign names/types and fail.
 
 -- @domestic
-INSERT INTO domestic_certificates
+INSERT INTO domestic_certificates BY NAME
 SELECT s.*
-FROM read_csv('data/updates/domestic/*.csv', header=true, escape='\', strict_mode=false, parallel=false, columns={
+FROM read_csv('data/updates/domestic/*.csv', header=true, escape='\', strict_mode=false, parallel=false, types={
     'certificate_number': 'VARCHAR',
     'address1': 'VARCHAR',
     'address2': 'VARCHAR',
@@ -109,9 +115,9 @@ FROM read_csv('data/updates/domestic/*.csv', header=true, escape='\', strict_mod
 ANTI JOIN domestic_certificates t USING (certificate_number);
 
 -- @non-domestic
-INSERT INTO non_domestic_certificates
+INSERT INTO non_domestic_certificates BY NAME
 SELECT s.*
-FROM read_csv('data/updates/non-domestic/*.csv', header=true, escape='\', strict_mode=false, parallel=false, columns={
+FROM read_csv('data/updates/non-domestic/*.csv', header=true, escape='\', strict_mode=false, parallel=false, types={
     'certificate_number': 'VARCHAR',
     'address1': 'VARCHAR',
     'address2': 'VARCHAR',
