@@ -1,4 +1,4 @@
--- duckdb data/epc_new.duckdb
+duckdb data/epc_new.duckdb
 
 INSTALL SPATIAL;
 LOAD SPATIAL;
