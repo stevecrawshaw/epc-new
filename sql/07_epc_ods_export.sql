@@ -68,12 +68,16 @@ LEFT JOIN open_uprn_lep_tbl o ON e.uprn = o.uprn;
 -- SELECT COUNT() FROM epc_domestic_lep_ods_vw GROUP BY uprn HAVING COUNT() > 1;
 
 
--- EXPORT TO CSV - REPLACE PROPRIETARY SQUARED SYMBOL WITH '2' TO AVOID ISSUES IN ODS ENCODING
+-- EXPORT TO CSV - REPLACE SUPERSCRIPT TWO (U+00B2) WITH '2' TO AVOID ISSUES IN ODS ENCODING
+-- chr(178) rather than a literal '²': the literal is dropped when the script is fed through
+-- the Windows console, leaving an empty regex that matches at position 0 and prepends '2'.
+-- replace() is literal and replaces all occurrences (regexp_replace needs 'g' for that).
 COPY
  (
       SELECT * REPLACE (
-          regexp_replace(walls_description, '²', '2') AS walls_description,
-          regexp_replace(roof_description, '²', '2') AS roof_description
+          replace(walls_description, chr(178), '2') AS walls_description,
+          replace(roof_description, chr(178), '2') AS roof_description,
+          lower(tenure) AS tenure
       )
       FROM epc_domestic_lep_ods_vw)
  TO
