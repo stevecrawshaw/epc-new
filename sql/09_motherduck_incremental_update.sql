@@ -20,11 +20,12 @@ USE epc_new;
 -- MotherDuck authentication comes from the MOTHERDUCK_TOKEN environment variable
 ATTACH 'md:';
 
+.tables
 -- =============================================================================
 -- Bootstrap remote schema (safe to re-run)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS md.epc.domestic_certificates (
+CREATE TABLE IF NOT EXISTS epc.domestic_certificates (
     certificate_number VARCHAR,
     address1 VARCHAR,
     address2 VARCHAR,
@@ -120,7 +121,7 @@ CREATE TABLE IF NOT EXISTS md.epc.domestic_certificates (
     uprn_source VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS md.epc.domestic_recommendations (
+CREATE TABLE IF NOT EXISTS epc.domestic_recommendations (
     certificate_number VARCHAR,
     improvement_item INTEGER,
     improvement_id VARCHAR,
@@ -129,7 +130,7 @@ CREATE TABLE IF NOT EXISTS md.epc.domestic_recommendations (
     improvement_descr_text VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS md.epc.non_domestic_certificates (
+CREATE TABLE IF NOT EXISTS epc.non_domestic_certificates (
     certificate_number VARCHAR,
     address1 VARCHAR,
     address2 VARCHAR,
@@ -171,7 +172,7 @@ CREATE TABLE IF NOT EXISTS md.epc.non_domestic_certificates (
     uprn_source VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS md.epc.non_domestic_recommendations (
+CREATE TABLE IF NOT EXISTS epc.non_domestic_recommendations (
     certificate_number VARCHAR,
     payback_type VARCHAR,
     recommendation_item INTEGER,
@@ -180,7 +181,7 @@ CREATE TABLE IF NOT EXISTS md.epc.non_domestic_recommendations (
     recommendation VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS md.epc.ca_la_tbl (
+CREATE TABLE IF NOT EXISTS epc.ca_la_tbl (
     LAD25CD VARCHAR,
     LAD25NM VARCHAR,
     CAUTH25CD VARCHAR,
@@ -194,31 +195,31 @@ CREATE TABLE IF NOT EXISTS md.epc.ca_la_tbl (
 -- =============================================================================
 
 -- Domestic certificates
-INSERT INTO md.epc.domestic_certificates BY NAME
+INSERT INTO epc.domestic_certificates BY NAME
 SELECT s.*
 FROM epc_new.domestic_certificates s
-ANTI JOIN md.epc.domestic_certificates t USING (certificate_number);
+ANTI JOIN epc.domestic_certificates t USING (certificate_number);
 
 -- Domestic recommendations
-INSERT INTO md.epc.domestic_recommendations BY NAME
+INSERT INTO epc.domestic_recommendations BY NAME
 SELECT s.*
 FROM epc_new.domestic_recommendations s
-ANTI JOIN md.epc.domestic_recommendations t USING (certificate_number, improvement_item);
+ANTI JOIN epc.domestic_recommendations t USING (certificate_number, improvement_item);
 
 -- Non-domestic certificates
-INSERT INTO md.epc.non_domestic_certificates BY NAME
+INSERT INTO epc.non_domestic_certificates BY NAME
 SELECT s.*
 FROM epc_new.non_domestic_certificates s
-ANTI JOIN md.epc.non_domestic_certificates t USING (certificate_number);
+ANTI JOIN epc.non_domestic_certificates t USING (certificate_number);
 
 -- Non-domestic recommendations
-INSERT INTO md.epc.non_domestic_recommendations BY NAME
+INSERT INTO epc.non_domestic_recommendations BY NAME
 SELECT s.*
 FROM epc_new.non_domestic_recommendations s
-ANTI JOIN md.epc.non_domestic_recommendations t USING (certificate_number, recommendation_item);
+ANTI JOIN epc.non_domestic_recommendations t USING (certificate_number, recommendation_item);
 
 -- ca_la_tbl — a small static lookup; replace it entirely so new or updated
 -- rows always propagate.  The table has at most ~400 rows.
-DELETE FROM md.epc.ca_la_tbl WHERE 1=1;
-INSERT INTO md.epc.ca_la_tbl BY NAME
+DELETE FROM epc.ca_la_tbl WHERE 1=1;
+INSERT INTO epc.ca_la_tbl BY NAME
 SELECT * FROM epc_new.ca_la_tbl;
